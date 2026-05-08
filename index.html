@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heirloom Church — Organizational Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #faf7f2;
+    --parchment: #f2ece0;
+    --gold: #c8a96e;
+    --gold-deep: #a8884a;
+    --ink: #1c1812;
+    --ink-mid: #3d3526;
+    --ink-light: #7a6e5f;
+    --border: #e0d8cc;
+
+    --staff-bg: #1e3a4f;
+    --staff-fg: #f2ece0;
+    --staff-accent: #d4b87a;
+
+    --contractor-bg: #2d2419;
+    --contractor-fg: #f2ece0;
+    --contractor-accent: #d4b87a;
+
+    --vol-bg: #ffffff;
+    --vol-border: #c8a96e;
+    --vol-fg: #1c1812;
+
+    --gap-bg: #fdf4e0;
+    --gap-border: #d4a55a;
+    --gap-deep: #a8884a;
+
+    --proposed-bg: #eff5ed;
+    --proposed-border: #7aa07e;
+    --proposed-deep: #4d7a52;
+
+    --line: #b8a98a;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    padding: 32px 20px 50px;
+    min-height: 100vh;
+  }
+
+  .header { text-align: center; margin-bottom: 20px; }
+  .header-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700; color: var(--ink);
+    margin-bottom: 4px; letter-spacing: -0.5px;
+  }
+  .header-sub { font-size: 12px; color: var(--ink-light); font-weight: 400; }
+  .header-rule { width: 60px; height: 2px; background: var(--gold); margin: 12px auto 0; border-radius: 2px; }
+
+  /* Tab Bar */
+  .tab-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 0 16px;
+    background: linear-gradient(to bottom, var(--cream) 80%, rgba(250,247,242,0.85));
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    background: #fff;
+    border: 1.5px solid var(--gold);
+    color: var(--ink-mid);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tab-btn:hover { background: var(--parchment); }
+  .tab-btn.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--cream);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Legend Block */
+  .legend-block {
+    max-width: 920px;
+    margin: 0 auto 28px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .legend-row {
+    display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .legend-row:last-child { margin-bottom: 0; }
+  .legend-row-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    text-align: center;
+    margin-bottom: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+  .legend-row-title:first-child { border-top: none; padding-top: 0; }
+  .legend-item {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 500; color: var(--ink-mid);
+  }
+  .legend-dot { width: 13px; height: 13px; border-radius: 4px; border: 1.5px solid; flex-shrink: 0; }
+  .legend-dot.staff { background: var(--staff-bg); border-color: var(--staff-bg); }
+  .legend-dot.contractor { background: var(--contractor-bg); border-color: var(--contractor-accent); }
+  .legend-dot.volunteer { background: var(--vol-bg); border-color: var(--vol-border); }
+  .legend-dot.gap { background: var(--gap-bg); border-color: var(--gap-border); }
+  .legend-dot.proposed { background: var(--proposed-bg); border-color: var(--proposed-border); }
+  .legend-circle {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #5a8a5e;
+    flex-shrink: 0;
+  }
+  .legend-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 14px; padding: 0 5px;
+    border-radius: 3px;
+    background: #f5f1ea;
+    color: var(--ink);
+    font-size: 9px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+  }
+  .legend-pill.T { color: #8a7a5a; }
+  .legend-pill.R { color: #4a6a8b; }
+  .legend-pill.A { color: #8b4a4a; font-weight: 800; }
+  .legend-pill.LL {
+    background: #fff; color: var(--ink-mid);
+    border: 1px solid var(--line);
+  }
+
+  .chart-scroll { overflow-x: auto; padding-bottom: 20px; }
+  .chart { min-width: 1500px; margin: 0 auto; padding: 0 12px; }
+
+  .top-tier { display: flex; flex-direction: column; align-items: center; }
+
+  /* Node */
+  .node {
+    border-radius: 10px;
+    padding: 9px 13px 14px;
+    text-align: center;
+    min-width: 130px;
+    max-width: 170px;
+    box-shadow: 0 2px 6px rgba(28,24,18,0.06);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+  @media (hover: hover) {
+    .node:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,24,18,0.12); }
+  }
+  .node .role { font-size: 9px; font-weight: 600; line-height: 1.3; letter-spacing: 1px; text-transform: uppercase; }
+  .node .name { font-size: 12px; font-weight: 700; margin-top: 3px; line-height: 1.25; }
+  .node .name-secondary { font-size: 10.5px; font-weight: 500; margin-top: 1px; opacity: 0.85; }
+
+  .badges {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 7px;
+    gap: 4px;
+    min-height: 16px;
+  }
+  .badges-left { display: flex; align-items: center; gap: 3px; }
+  .budget-circle {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: #5a8a5e;
+    border: 1.5px solid #fff;
+    box-shadow: 0 0 0 1px #5a8a5e;
+    flex-shrink: 0;
+  }
+  .tra-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 14px; min-width: 14px; padding: 0 4px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(0,0,0,0.08);
+    font-size: 9px; font-weight: 800; line-height: 1;
+  }
+  .tra-pill.T { color: #8a7a5a; }
+  .tra-pill.R { color: #4a6a8b; }
+  .tra-pill.A { color: #8b4a4a; }
+
+  .ll-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 14px; padding: 0 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(0,0,0,0.12);
+    color: var(--ink-mid);
+    font-size: 9px; font-weight: 700; line-height: 1;
+    letter-spacing: 0.3px;
+  }
+
+  .node.staff .tra-pill, .node.staff .ll-pill,
+  .node.contractor .tra-pill, .node.contractor .ll-pill {
+    background: rgba(255,255,255,0.92);
+  }
+
+  .node.staff { background: var(--staff-bg); border: 1.5px solid var(--staff-bg); }
+  .node.staff .role { color: var(--staff-accent); }
+  .node.staff .name { color: var(--staff-fg); }
+  .node.staff .name-secondary { color: rgba(242,236,224,0.7); }
+
+  .node.contractor { background: var(--contractor-bg); border: 1.5px dashed var(--contractor-accent); }
+  .node.contractor .role { color: var(--contractor-accent); }
+  .node.contractor .name { color: var(--contractor-fg); }
+  .node.contractor::after {
+    content: "1099";
+    position: absolute;
+    top: -7px; right: 6px;
+    background: var(--contractor-accent);
+    color: var(--ink);
+    font-size: 7.5px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .node.volunteer { background: var(--vol-bg); border: 1.5px solid var(--vol-border); }
+  .node.volunteer .role { color: var(--ink-mid); }
+  .node.volunteer .name { color: var(--ink); }
+  .node.volunteer .name-secondary { color: var(--ink-light); }
+
+  .node.gap {
+    background: var(--gap-bg);
+    border: 1.5px dashed var(--gap-border);
+  }
+  .node.gap::before {
+    content: "GAP";
+    position: absolute; top: -7px; right: 6px;
+    background: var(--gap-deep); color: #fff;
+    font-size: 7.5px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+  .node.gap .role { color: var(--gap-deep); }
+  .node.gap .name { color: var(--ink-mid); font-style: italic; }
+
+  .node.proposed {
+    background: var(--proposed-bg);
+    border: 1.5px dashed var(--proposed-border);
+  }
+  .node.proposed::before {
+    content: "PROPOSED";
+    position: absolute; top: -7px; right: 6px;
+    background: var(--proposed-deep); color: #fff;
+    font-size: 7.5px; font-weight: 700;
+    padding: 2px 5px; border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+  .node.proposed .role { color: var(--proposed-deep); }
+  .node.proposed .name { color: var(--ink-mid); }
+
+  .node.lead-pastor { min-width: 180px; padding: 12px 22px 16px; }
+  .node.lead-pastor .role { font-size: 10.5px; }
+  .node.lead-pastor .name { font-size: 16px; }
+
+  .node.tier2 { min-width: 150px; padding: 11px 16px 16px; }
+  .node.tier2 .name { font-size: 14px; }
+
+  .v-line { width: 2px; background: var(--line); margin: 0 auto; }
+
+  .reporting-label {
+    background: var(--cream);
+    border: 1px solid var(--gold);
+    color: var(--gold-deep);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 100px;
+    display: inline-block; margin: 0 auto;
+    position: relative; z-index: 2;
+  }
+
+  .tier2-managers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px; padding-top: 20px; align-items: start;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .tier2-quad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px; padding-top: 20px; align-items: start;
+    max-width: 1600px; margin: 0 auto;
+  }
+
+  .tier2-specialists {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px; padding-top: 20px; align-items: start;
+    max-width: 700px; margin: 0 auto;
+  }
+
+  .pillar { display: flex; flex-direction: column; align-items: center; }
+  .pillar > .v-line { height: 16px; }
+
+  .fan-group {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px 8px 8px;
+    background: rgba(255,255,255,0.4);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    position: relative;
+  }
+  .fan-group-label {
+    position: absolute; top: -9px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--cream);
+    border: 1px solid var(--gold);
+    color: var(--gold-deep);
+    font-size: 8.5px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .fan-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px; margin-top: 6px;
+  }
+  .fan-grid.three { grid-template-columns: repeat(3, 1fr); }
+
+  .disconnected-zone {
+    margin-top: 32px;
+    padding: 24px 20px 20px;
+    background: rgba(245, 241, 234, 0.6);
+    border: 1px dashed var(--gap-border);
+    border-radius: 12px; position: relative;
+  }
+  .disconnected-zone .zone-label {
+    position: absolute; top: -10px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--cream); color: var(--gap-deep);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 14px;
+    border: 1px solid var(--gap-border);
+    border-radius: 100px;
+  }
+  .disconnected-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px; align-items: start;
+  }
+  .disconnected-note {
+    text-align: center; font-size: 10.5px;
+    color: var(--ink-light); font-style: italic;
+    margin-bottom: 14px; padding: 0 20px;
+  }
+
+  .leaf {
+    background: var(--vol-bg);
+    border: 1.5px dashed var(--vol-border);
+    border-radius: 8px;
+    padding: 6px 11px;
+    font-size: 10.5px; font-weight: 600;
+    color: var(--ink-mid);
+    min-width: 120px; text-align: center;
+    margin-top: 6px;
+  }
+
+  .dakota-branch {
+    background: var(--parchment);
+    border: 1.5px solid var(--gold);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-align: center;
+    min-width: 110px;
+    position: relative;
+  }
+  .dakota-branch::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    width: 14px;
+    height: 1.5px;
+    background: var(--gold);
+  }
+
+  .footer-note {
+    text-align: center; margin-top: 36px;
+    font-size: 11px; color: var(--ink-light);
+    font-style: italic;
+  }
+
+  /* Recommended State intro card */
+  .recommended-intro {
+    max-width: 900px;
+    margin: 0 auto 28px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #fff 0%, var(--proposed-bg) 100%);
+    border: 1px solid var(--proposed-border);
+    border-left: 4px solid var(--proposed-deep);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+  .recommended-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .recommended-intro .draft-tag {
+    display: inline-block;
+    background: var(--proposed-deep);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+
+  .summary-card {
+    max-width: 900px;
+    margin: 36px auto 0;
+    padding: 18px 22px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gap-border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+  .summary-card.proposed { border-left-color: var(--proposed-deep); }
+  .summary-card.roadmap { border-left-color: var(--gold-deep); }
+  .summary-card.questions { border-left-color: var(--ink-mid); }
+
+  .summary-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; color: var(--ink);
+    margin-bottom: 8px; font-weight: 700;
+  }
+  .summary-card ul { padding-left: 18px; margin-top: 6px; }
+  .summary-card li { margin-bottom: 6px; }
+  .summary-card strong { color: var(--gap-deep); }
+  .summary-card.proposed strong { color: var(--proposed-deep); }
+  .summary-card.roadmap strong { color: var(--gold-deep); }
+  .summary-card.questions strong { color: var(--ink); }
+  .summary-card .callout {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--gap-bg);
+    border-radius: 6px;
+    border-left: 3px solid var(--gap-deep);
+  }
+  .summary-card.proposed .callout {
+    background: var(--proposed-bg);
+    border-left-color: var(--proposed-deep);
+  }
+
+  .roadmap-item {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .roadmap-item:last-child { border-bottom: none; }
+  .roadmap-phase {
+    flex-shrink: 0;
+    width: 90px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    padding-top: 2px;
+  }
+  .roadmap-content { flex: 1; }
+  .roadmap-content h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .roadmap-content p {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin: 0;
+  }
+
+  /* MOBILE STYLES */
+  @media (max-width: 900px) {
+    .chart { min-width: auto; }
+    .tier2-managers { grid-template-columns: 1fr; gap: 24px; max-width: 500px; }
+    .tier2-quad { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .tier2-specialists { grid-template-columns: 1fr; gap: 24px; max-width: 400px; }
+    .disconnected-row { grid-template-columns: repeat(2, 1fr); }
+    .top-tier > div[style*="width: 900px"] { width: 100% !important; max-width: 500px; }
+    .top-tier > div[style*="width: 1200px"] { width: 100% !important; max-width: 600px; }
+  }
+
+  @media (max-width: 700px) {
+    body { padding: 16px 12px 40px; }
+    .header h1 { font-size: 22px; }
+    .legend-block { padding: 14px 16px; }
+    .legend-row { gap: 12px; }
+    .node { min-width: 110px; max-width: 150px; padding: 8px 10px 12px; }
+    .node .role { font-size: 8.5px; }
+    .node .name { font-size: 11px; }
+    .fan-grid.three { grid-template-columns: repeat(2, 1fr); }
+    .fan-group-label { white-space: normal; max-width: 90%; line-height: 1.3; }
+    .tab-btn { padding: 10px 16px; font-size: 11px; }
+  }
+
+  @media (max-width: 600px) {
+    .disconnected-row { grid-template-columns: 1fr; }
+    .tier2-quad { grid-template-columns: 1fr; max-width: 360px; }
+  }
+
+  @media (max-width: 500px) {
+    .fan-grid, .fan-grid.three { grid-template-columns: 1fr; }
+    .node { max-width: 100%; }
+    .tab-bar { gap: 6px; padding: 10px 0 14px; }
+    .tab-btn { padding: 10px 14px; font-size: 10.5px; letter-spacing: 0.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Organizational Chart</div>
+  <h1>Heirloom Church</h1>
+  <div class="header-sub">Leadership · Reporting Structure · Roadmap</div>
+  <div class="header-rule"></div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="current">Current State</button>
+  <button class="tab-btn" data-tab="recommended">Recommended State</button>
+</div>
+
+<div class="legend-block">
+  <div class="legend-row-title">Node Type</div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot staff"></div>Staff (W-2)</div>
+    <div class="legend-item"><div class="legend-dot contractor"></div>Contractor (1099)</div>
+    <div class="legend-item"><div class="legend-dot volunteer"></div>Volunteer</div>
+    <div class="legend-item"><div class="legend-dot gap"></div>Gap / Open</div>
+    <div class="legend-item"><div class="legend-dot proposed"></div>Proposed Role</div>
+  </div>
+  <div class="legend-row-title">Authority &amp; Accountability (bottom-left)</div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-circle"></div>Budget Authority</div>
+    <div class="legend-item"><span class="legend-pill T">T</span>Task</div>
+    <div class="legend-item"><span class="legend-pill R">R</span>Responsibility</div>
+    <div class="legend-item"><span class="legend-pill A">A</span>Authority</div>
+  </div>
+  <div class="legend-row-title">Leadership Level (bottom-right)</div>
+  <div class="legend-row">
+    <div class="legend-item"><span class="legend-pill LL">LS</span>Lead Self</div>
+    <div class="legend-item"><span class="legend-pill LL">LO</span>Lead Others</div>
+    <div class="legend-item"><span class="legend-pill LL">LL</span>Lead Leaders</div>
+    <div class="legend-item"><span class="legend-pill LL">LD</span>Lead Department</div>
+    <div class="legend-item"><span class="legend-pill LL">LC</span>Lead Church</div>
+  </div>
+</div>
+
+<!-- ============ TAB 1: CURRENT STATE ============ -->
+<div class="tab-content active" id="tab-current">
+
+<div class="chart-scroll">
+<div class="chart">
+
+  <div class="top-tier">
+    <div class="node volunteer" style="min-width:240px;">
+      <div class="role">Strategic Oversight</div>
+      <div class="name">Strategic Planning Team / Send Network</div>
+      <div class="badges"><span></span><span></span></div>
+    </div>
+    <div class="v-line" style="height:14px;"></div>
+    <div class="reporting-label">Accountability</div>
+    <div class="v-line" style="height:14px;"></div>
+
+    <div class="node staff lead-pastor">
+      <div class="role">Lead Pastor</div>
+      <div class="name">Dakota</div>
+      <div class="badges">
+        <div class="badges-left">
+          <div class="budget-circle"></div>
+          <span class="tra-pill A">A</span>
+        </div>
+        <span class="ll-pill">LC</span>
+      </div>
+    </div>
+
+    <div class="v-line" style="height:14px;"></div>
+    <div class="reporting-label">People Managers</div>
+    <div class="v-line" style="height:14px;"></div>
+
+    <div style="width: 1100px; height:2px; background: var(--line);"></div>
+
+    <div class="tier2-managers" style="grid-template-columns: repeat(4, 1fr); max-width: 1500px;">
+
+      <div class="pillar" style="width: 100%; max-width: 460px;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node staff tier2">
+          <div class="role">Associate Pastor</div>
+          <div class="name">Cy</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill A">A</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Family Ministries</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Coordinator</div>
+              <div class="name">Lauren / Maggie / Peyton</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Students</div>
+              <div class="name">Noah</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fan-group" style="margin-top: 14px;">
+          <div class="fan-group-label">Groups</div>
+          <div class="fan-grid">
+            <div class="node staff">
+              <div class="role">Groups Leader</div>
+              <div class="name">Cy</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fan-group" style="margin-top: 14px;">
+          <div class="fan-group-label">Marketing</div>
+          <div class="fan-grid">
+            <div class="node contractor">
+              <div class="role">Marketing</div>
+              <div class="name">VisitorReach</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar" style="width: 100%; max-width: 460px;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node staff tier2">
+          <div class="role">Worship Pastor</div>
+          <div class="name">Noble</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill R">R</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Worship & Production</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Production Lead</div>
+              <div class="name">Joe</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Slides</div>
+              <div class="name">Jordan</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar" style="width: 100%; max-width: 460px;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node volunteer tier2">
+          <div class="role">Sunday Operations Lead</div>
+          <div class="name">Justin</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill R">R</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Hospitality & Sunday Ops</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Starting Point</div>
+              <div class="name">Daile</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Café Team</div>
+              <div class="name">Billy / Monica</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node gap">
+              <div class="role">Parking Team</div>
+              <div class="name">Open</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Safety Team</div>
+              <div class="name">Jay / Jacob</div>
+              <div class="badges"><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 4: Chelsea - Admin & Comms (Current State) -->
+      <div class="pillar" style="width: 100%; max-width: 460px;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node contractor tier2">
+          <div class="role">Admin &amp; Communications</div>
+          <div class="name">Chelsea</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill T">T</span></div>
+            <span class="ll-pill">LS</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Communications</div>
+          <div class="fan-grid">
+            <div class="node contractor">
+              <div class="role">Social Media</div>
+              <div class="name">Chelsea</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node contractor">
+              <div class="role">Admin Support</div>
+              <div class="name">Chelsea</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Website</div>
+              <div class="name">Josh</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px;">
+      <div style="text-align:center; margin-bottom: 14px;">
+        <div class="reporting-label">Additional Direct Reports to Dakota</div>
+      </div>
+      <div style="font-size: 11px; color: var(--ink-light); text-align: center; margin-bottom: 16px; font-style: italic; max-width: 800px; margin-left: auto; margin-right: auto;">
+        Each of the following reports directly to Dakota. None of these roles currently have a manager between them and the lead pastor.
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 180px)); gap: 12px; justify-content: center; max-width: 1500px; margin: 0 auto;">
+
+        <div class="node volunteer">
+          <div class="role">Director of Stewardship</div>
+          <div class="name">Ricky</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill R">R</span></div>
+            <span class="ll-pill">LS</span>
+          </div>
+        </div>
+
+        <div class="node volunteer">
+          <div class="role">Teaching Team</div>
+          <div class="name">Cy / Rudy / Dakota</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LC</span></div>
+        </div>
+
+        <div class="node volunteer">
+          <div class="role">Pipe &amp; Drape</div>
+          <div class="name">Jeff</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+        </div>
+
+        <div class="node staff">
+          <div class="role">Assimilation Director</div>
+          <div class="name">Dakota</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+        </div>
+
+        <div class="node volunteer">
+          <div class="role">Women's Ministry</div>
+          <div class="name">Jodi</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+        </div>
+
+        <div class="node staff">
+          <div class="role">Men's Ministry</div>
+          <div class="name">Dakota</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+        </div>
+
+        <div class="node gap">
+          <div class="role">Recovery Ministry</div>
+          <div class="name">Open</div>
+          <div class="badges"><span></span><span></span></div>
+        </div>
+
+        <div class="node gap">
+          <div class="role">Prayer Team</div>
+          <div class="name">Open</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+        </div>
+
+        <div class="node gap">
+          <div class="role">Baptism Coordinator</div>
+          <div class="name">Open</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+        </div>
+
+        <div class="node gap">
+          <div class="role">Director of Missions</div>
+          <div class="name">Open</div>
+          <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+        </div>
+
+      </div>
+
+      <!-- Outreach Initiatives nested under Director of Missions -->
+      <div style="margin-top: 28px; padding: 20px 16px 16px; background: rgba(245, 241, 234, 0.5); border: 1px dashed var(--gap-border); border-radius: 12px; max-width: 1100px; margin-left: auto; margin-right: auto; position: relative;">
+        <div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--cream); color: var(--gap-deep); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 14px; border: 1px solid var(--gap-border); border-radius: 100px;">Outreach Initiatives · Under Director of Missions</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px;">
+          <div class="leaf">Local Missions</div>
+          <div class="leaf">Fostering Hope</div>
+          <div class="leaf">Ancora Ministries</div>
+          <div class="leaf">Engage Hays</div>
+          <div class="leaf">Global Missions</div>
+          <div class="leaf">Take Hold Church</div>
+          <div class="leaf">City of Kyle</div>
+          <div class="leaf">Hays HS</div>
+          <div class="leaf">Kyle / Buda YL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Updated November 2025 · Honest current-state structure · Every role on this chart reports directly to Dakota
+  </div>
+</div>
+</div>
+
+</div>
+<!-- END TAB 1 -->
+
+<!-- ============ TAB 2: RECOMMENDED STATE ============ -->
+<div class="tab-content" id="tab-recommended">
+
+<div class="recommended-intro">
+  <span class="draft-tag">Draft for Review</span>
+  <h2>Recommended Future-State Org Structure</h2>
+  <p>This view proposes Heirloom's organizational structure within the next 12 months &mdash; assuming healthy growth, intentional volunteer recruitment, and a real volunteer leadership pipeline. It addresses the structural gaps surfaced in the Current State view: the Disconnected Functions zone is eliminated, and every role has a real reporting line.</p>
+  <p style="margin-top:8px;"><strong>Roles marked <span style="background:var(--proposed-deep); color:#fff; padding:1px 6px; border-radius:3px; font-size:10px; letter-spacing:0.5px;">PROPOSED</span> are recommendations for hire or volunteer recruitment.</strong> This is a starting point for conversation, not a final org chart.</p>
+</div>
+
+<div class="chart-scroll">
+<div class="chart">
+
+  <div class="top-tier">
+    <div style="display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;">
+      <div class="node volunteer" style="min-width:220px;">
+        <div class="role">Strategic Oversight</div>
+        <div class="name">Strategic Planning Team / Send Network</div>
+        <div class="badges"><span></span><span></span></div>
+      </div>
+      <div class="node volunteer" style="min-width:160px;">
+        <div class="role">Spiritual Oversight</div>
+        <div class="name">Elder Team</div>
+        <div class="badges"><span></span><span></span></div>
+      </div>
+    </div>
+    <div class="v-line" style="height:14px;"></div>
+    <div class="reporting-label">Accountability</div>
+    <div class="v-line" style="height:14px;"></div>
+
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap;">
+      <div class="node staff lead-pastor">
+        <div class="role">Lead Pastor</div>
+        <div class="name">Dakota</div>
+        <div class="badges">
+          <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill A">A</span></div>
+          <span class="ll-pill">LC</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div class="dakota-branch">Vision</div>
+        <div class="dakota-branch">Shepherding</div>
+        <div class="dakota-branch">Coaching</div>
+      </div>
+    </div>
+
+    <div class="v-line" style="height:14px;"></div>
+    <div class="reporting-label">Department Heads · 5 Direct Reports</div>
+    <div class="v-line" style="height:14px;"></div>
+
+    <div style="width: 1300px; height:2px; background: var(--line);"></div>
+
+    <!-- 5-column tier: Cy, Noble, Justin, Ricky, Chelsea -->
+    <div class="tier2-quad">
+
+      <!-- Column 1: Cy - Family Ministries + Discipleship -->
+      <div class="pillar" style="width: 100%;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node staff tier2">
+          <div class="role">Associate Pastor</div>
+          <div class="name">Cy</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill A">A</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+
+        <div class="fan-group">
+          <div class="fan-group-label">Family Ministries</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Coordinators</div>
+              <div class="name">Lauren · Maggie · Peyton</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Nursery / Kids Lead</div>
+              <div class="name">Jamie</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Students Lead</div>
+              <div class="name">TBD</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Groups</div>
+          <div class="fan-grid">
+            <div class="node proposed">
+              <div class="role">Groups Leader</div>
+              <div class="name">Corey</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Recovery</div>
+          <div class="fan-grid">
+            <div class="node proposed">
+              <div class="role">Recovery Program Lead</div>
+              <div class="name">Jamie</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Events</div>
+          <div class="fan-grid">
+            <div class="node proposed">
+              <div class="role">Events Coordinator</div>
+              <div class="name">Aubri</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Marketing</div>
+          <div class="fan-grid">
+            <div class="node contractor">
+              <div class="role">Marketing</div>
+              <div class="name">VisitorReach</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Noble - Worship -->
+      <div class="pillar" style="width: 100%;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node staff tier2">
+          <div class="role">Worship Pastor</div>
+          <div class="name">Noble</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill A">A</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Worship & Production</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Production Lead</div>
+              <div class="name">Joe</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Slides</div>
+              <div class="name">Jordan</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Music Team Lead</div>
+              <div class="name">Sheila</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3: Director of Sunday Ops - TBD -->
+      <div class="pillar" style="width: 100%;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node proposed tier2">
+          <div class="role">Director of Sunday Ops</div>
+          <div class="name">TBD</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill R">R</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Hospitality & Sunday Ops</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Facilities Lead</div>
+              <div class="name">Justin</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Setup / Tear Down</div>
+              <div class="name">Jeff</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Welcome Team Lead</div>
+              <div class="name">Brother Chris</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Starting Point</div>
+              <div class="name">Clauda</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Café Lead</div>
+              <div class="name">Billy</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Parking Lead</div>
+              <div class="name">Evan</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Safety Lead</div>
+              <div class="name">Jay / Jacob</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Photography</div>
+              <div class="name">Chris</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 4: Ricky - Executive Pastor -->
+      <div class="pillar" style="width: 100%;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node volunteer tier2">
+          <div class="role">Executive Pastor</div>
+          <div class="name">Ricky</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill A">A</span></div>
+            <span class="ll-pill">LD</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Stewardship & Finance</div>
+          <div class="fan-grid">
+            <div class="node proposed">
+              <div class="role">Treasurer</div>
+              <div class="name">TBD</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node contractor">
+              <div class="role">Bookkeeping</div>
+              <div class="name">TurnkeyCFO</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">AI / Tech</div>
+              <div class="name">Eric</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Connections</div>
+          <div class="fan-grid">
+            <div class="node volunteer">
+              <div class="role">Women's Ministry</div>
+              <div class="name">Jodi</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Assimilation Director</div>
+              <div class="name">JT</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Men's Ministry</div>
+              <div class="name">Allen</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">New Member / Baptism</div>
+              <div class="name">Recruit</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+            <div class="node proposed">
+              <div class="role">Prayer Team</div>
+              <div class="name">Clauda</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LO</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Hosting Team</div>
+          <div class="fan-grid" style="grid-template-columns: 1fr;">
+            <div class="node volunteer" style="min-width: 100%; padding: 12px 16px 16px;">
+              <div class="role">Hosting Team</div>
+              <div class="name" style="margin-top: 5px; font-size: 11.5px; line-height: 1.5;">
+                Cy · Rudy · Dakota<br>
+                Ricky · JT · Allen<br>
+                Jodi · Brother Chris · TBD · TBD
+              </div>
+              <div class="badges">
+                <div class="badges-left"><span class="tra-pill T">T</span></div>
+                <span class="ll-pill">LC</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fan-group" style="margin-top: 12px;">
+          <div class="fan-group-label">Outreach</div>
+          <div class="fan-grid">
+            <div class="node proposed">
+              <div class="role">Director of Missions</div>
+              <div class="name">Recruit</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LL</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 5: Chelsea - Comms & Admin (direct to Dakota) -->
+      <div class="pillar" style="width: 100%;">
+        <div class="v-line" style="height:18px;"></div>
+        <div class="node contractor tier2">
+          <div class="role">Comms &amp; Admin</div>
+          <div class="name">Chelsea</div>
+          <div class="badges">
+            <div class="badges-left"><div class="budget-circle"></div><span class="tra-pill T">T</span></div>
+            <span class="ll-pill">LS</span>
+          </div>
+        </div>
+        <div class="fan-group">
+          <div class="fan-group-label">Communications</div>
+          <div class="fan-grid">
+            <div class="node contractor">
+              <div class="role">Social Media</div>
+              <div class="name">Chelsea</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node contractor">
+              <div class="role">Admin Support</div>
+              <div class="name">Chelsea</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node contractor">
+              <div class="role">Newsletter</div>
+              <div class="name">Chelsea</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node contractor">
+              <div class="role">Project Management</div>
+              <div class="name">Chelsea</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill R">R</span></div><span class="ll-pill">LS</span></div>
+            </div>
+            <div class="node volunteer">
+              <div class="role">Website</div>
+              <div class="name">Josh</div>
+              <div class="badges"><div class="badges-left"><span class="tra-pill T">T</span></div><span class="ll-pill">LS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dakota Direct: Teaching -->
+    <div style="margin-top: 32px;">
+      <div style="text-align:center; margin-bottom: 14px;">
+        <div class="reporting-label">Dakota Direct · Teaching</div>
+      </div>
+      <div style="display: flex; justify-content: center;">
+        <div class="pillar">
+          <div class="node volunteer tier2">
+            <div class="role">Teaching Team</div>
+            <div class="name">Cy · Rudy · Dakota</div>
+            <div class="name-secondary">Ricky · JT · Allen</div>
+            <div class="badges">
+              <div class="badges-left"><span class="tra-pill R">R</span></div>
+              <span class="ll-pill">LC</span>
+            </div>
+          </div>
+          <div style="font-size:10px; color:var(--ink-light); margin-top:8px; max-width:220px; text-align:center; font-style:italic; line-height:1.4;">
+            Preaching rotation. Reports to Dakota as a teaching collective; coordination owned by Dakota.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outreach Initiatives -->
+    <div class="disconnected-zone" style="margin-top: 32px; background: rgba(239, 245, 237, 0.4); border-color: var(--proposed-border);">
+      <div class="zone-label" style="color: var(--proposed-deep); border-color: var(--proposed-border);">Outreach Initiatives · Under Director of Missions</div>
+      <div class="disconnected-row" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px; margin: 0 auto;">
+        <div class="leaf">Local Missions</div>
+        <div class="leaf">Fostering Hope</div>
+        <div class="leaf">Ancora Ministries</div>
+        <div class="leaf">Global Missions</div>
+        <div class="leaf">Take Hold Church</div>
+        <div class="leaf">City of Kyle</div>
+        <div class="leaf">Hays HS</div>
+        <div class="leaf">Kyle / Buda YL</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    Recommended State · Next 12 months · Draft for review
+  </div>
+</div>
+</div>
+
+</div>
+<!-- END TAB 2 -->
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+      // Smooth scroll to top of content
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
