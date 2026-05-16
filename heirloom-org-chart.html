@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Heirloom Church — Org Chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --parchment: #faf7f2;
+    --parchment-2: #f3ece0;
+    --gold: #c8a96e;
+    --gold-deep: #a4864e;
+    --ink: #1c1812;
+    --ink-soft: #4a4238;
+    --sage: #8aa37b;
+    --sage-soft: #d8e3cf;
+    --blue-soft: #cfdce8;
+    --blue-ink: #3a5670;
+    --line: #d8cdb8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px 64px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 38px;
+    letter-spacing: 0.5px;
+    margin: 0 0 6px;
+  }
+  .subtitle {
+    color: var(--ink-soft);
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 18px 0 8px;
+  }
+  .btn {
+    background: var(--ink);
+    color: var(--parchment);
+    border: 1px solid var(--ink);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); background: var(--ink-soft); }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn.gold {
+    background: var(--gold);
+    border-color: var(--gold-deep);
+    color: var(--ink);
+  }
+
+  #chartWrap {
+    background: var(--parchment);
+    padding: 24px 16px 8px;
+    overflow-x: auto;
+  }
+  .chart {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* tree using nested ULs */
+  .tree, .tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .tree ul {
+    display: flex;
+    justify-content: center;
+    padding-top: 28px;
+  }
+  .tree li {
+    position: relative;
+    padding: 0 10px;
+    text-align: center;
+  }
+  /* horizontal connector at top of each child */
+  .tree li::before, .tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 28px;
+    border-top: 2px solid var(--line);
+    width: 50%;
+  }
+  .tree li::before { left: 0; border-right: 2px solid var(--line); }
+  .tree li::after { right: 0; }
+  .tree > li::before, .tree > li::after { display: none; }
+  .tree li:only-child::before, .tree li:only-child::after { display: none; }
+  .tree li:only-child { padding-top: 28px; }
+  .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+  .tree li:last-child::before { border-right: 2px solid var(--line); border-radius: 0 6px 0 0; }
+  .tree li:first-child::after { border-radius: 6px 0 0 0; }
+  /* vertical connector from node to children */
+  .node-wrap { position: relative; display: inline-block; }
+  .node-wrap.has-children::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -28px;
+    width: 2px;
+    height: 28px;
+    background: var(--line);
+    transform: translateX(-1px);
+  }
+
+  .node {
+    display: inline-block;
+    min-width: 170px;
+    max-width: 220px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    box-shadow: 0 1px 0 rgba(28,24,18,.04);
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .2s ease;
+    text-align: center;
+    user-select: none;
+  }
+  .node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(28,24,18,.10);
+  }
+  .node .name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+  .node .role {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+  .node .notes {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    font-style: italic;
+    opacity: .85;
+  }
+
+  /* tier styles */
+  .node.tier-lead {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--gold);
+    box-shadow: 0 4px 14px rgba(28,24,18,.18);
+  }
+  .node.tier-lead .role { color: var(--gold); }
+  .node.tier-senior {
+    background: var(--parchment-2);
+    border-color: var(--gold);
+  }
+  .node.tier-area {
+    background: #fff;
+    border-color: var(--sage);
+    border-style: dashed;
+  }
+  .node.tier-volunteer {
+    background: var(--sage-soft);
+    border-color: var(--sage);
+  }
+  .node.tier-intern {
+    background: var(--blue-soft);
+    border-color: var(--blue-ink);
+  }
+
+  .drop-target {
+    outline: 2px dashed var(--gold);
+    outline-offset: 4px;
+  }
+
+  /* bench */
+  .bench {
+    margin-top: 48px;
+    padding: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .bench h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin: 0 0 4px;
+    text-align: center;
+  }
+  .bench .hint {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .bench-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .pill {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px dashed var(--gold-deep);
+    background: transparent;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: grab;
+    transition: background .15s ease;
+  }
+  .pill:hover { background: var(--parchment-2); }
+  .pill:active { cursor: grabbing; }
+  .pill.add {
+    border-style: solid;
+    border-color: var(--ink);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* legend */
+  .legend {
+    margin: 32px auto 0;
+    max-width: 920px;
+    padding: 18px 22px;
+    background: var(--parchment-2);
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .legend .item { display: flex; align-items: center; gap: 8px; }
+  .swatch {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--line);
+  }
+  .swatch.lead { background: var(--ink); border-color: var(--gold); }
+  .swatch.senior { background: var(--parchment-2); border-color: var(--gold); }
+  .swatch.area { background: #fff; border-color: var(--sage); border-style: dashed; }
+  .swatch.volunteer { background: var(--sage-soft); border-color: var(--sage); }
+  .swatch.intern { background: var(--blue-soft); border-color: var(--blue-ink); }
+  .swatch.bench { background: transparent; border-color: var(--gold-deep); border-style: dashed; border-radius: 999px; }
+
+  /* modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,24,18,.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--parchment);
+    border-radius: 16px;
+    padding: 28px;
+    width: min(440px, 92vw);
+    box-shadow: 0 30px 80px rgba(0,0,0,.25);
+    border: 1px solid var(--line);
+  }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin: 0 0 18px;
+  }
+  .modal label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 12px 0 4px;
+  }
+  .modal input, .modal textarea, .modal select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .modal textarea { min-height: 70px; resize: vertical; }
+  .modal-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+  .btn.danger {
+    background: transparent;
+    color: #a64a4a;
+    border-color: #c8a3a3;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="subtitle">Heirloom Church</div>
+  <h1>Organizational Chart</h1>
+</header>
+
+<div class="toolbar">
+  <button class="btn gold" onclick="exportPNG()">Export PNG</button>
+  <button class="btn ghost" onclick="addRootChild()">+ Add Node</button>
+  <button class="btn ghost" onclick="resetData()">Reset</button>
+</div>
+
+<div id="chartWrap">
+  <div class="chart">
+    <ul id="treeRoot" class="tree"></ul>
+  </div>
+
+  <div class="bench" id="benchSection">
+    <h2>Volunteer Bench</h2>
+    <div class="hint">Drag a name onto any role to assign — or click “+ Add Volunteer”.</div>
+    <div class="bench-list" id="benchList"></div>
+  </div>
+
+  <div class="bench" id="teachingCircleSection">
+    <h2>Teaching Circle</h2>
+    <div class="hint">Rotating preaching team — not a reporting structure.</div>
+    <div class="bench-list" id="teachingCircleList"></div>
+  </div>
+
+  <div class="legend">
+    <div class="item"><span class="swatch lead"></span> Lead Pastor</div>
+    <div class="item"><span class="swatch senior"></span> Senior Staff</div>
+    <div class="item"><span class="swatch area"></span> Ministry Area</div>
+    <div class="item"><span class="swatch volunteer"></span> Volunteer Lead</div>
+    <div class="item"><span class="swatch intern"></span> Intern</div>
+    <div class="item"><span class="swatch bench"></span> Bench (Unassigned)</div>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <h3 id="modalTitle">Edit Node</h3>
+    <label>Name</label>
+    <input id="fName" type="text" />
+    <label>Role</label>
+    <input id="fRole" type="text" />
+    <label>Tier</label>
+    <select id="fTier">
+      <option value="lead">Lead Pastor</option>
+      <option value="senior">Senior Staff</option>
+      <option value="area">Ministry Area</option>
+      <option value="volunteer">Volunteer Lead</option>
+      <option value="intern">Intern</option>
+    </select>
+    <label>Notes (optional)</label>
+    <textarea id="fNotes"></textarea>
+    <div class="modal-actions">
+      <button class="btn danger" id="btnDelete" onclick="deleteCurrent()">Delete</button>
+      <button class="btn ghost" onclick="addChildToCurrent()">+ Add Child</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const DEFAULT_DATA = {
+  id: 'n1',
+  name: 'Dakota',
+  role: 'Lead Pastor',
+  tier: 'lead',
+  notes: '',
+  children: [
+    {
+      id: 'n2', name: 'Ricky', role: 'Executive Pastor & Treasurer', tier: 'senior',
+      notes: 'Vision → execution · Sunday experience · Systems & pipeline · Staff care',
+      children: [
+        { id: 'n13', name: 'Chelsea',  role: 'Admin Support',                 tier: 'volunteer', notes: '', children: [] },
+        { id: 'n14', name: 'Jody',     role: 'Social Media & Online Presence', tier: 'volunteer', notes: '', children: [] },
+        { id: 'n15', name: 'Aubrey',   role: 'Event Coordination',             tier: 'volunteer', notes: 'If she wants it', children: [] }
+      ]
+    },
+    {
+      id: 'n3', name: 'Cy', role: 'Associate Pastor, Family Ministries', tier: 'senior',
+      notes: '~50% Family Min · ~30% Groups · ~10% Online/Admin · ~10% Preaching',
+      children: [
+        {
+          id: 'n4', name: 'Family Ministries', role: 'Kids & Students', tier: 'area', notes: '',
+          children: [
+            { id: 'n5', name: 'Noah',           role: 'Student Intern',   tier: 'intern',     notes: '', children: [] },
+            { id: 'n6', name: 'Ricky & Aubrey', role: 'Student Leaders',  tier: 'volunteer',  notes: '', children: [] }
+          ]
+        },
+        {
+          id: 'n16', name: 'Groups', role: 'Community Groups', tier: 'area',
+          notes: 'Multiplying in fall · Cy shepherding leaders',
+          children: []
+        }
+      ]
+    },
+    {
+      id: 'n7', name: 'Noble', role: 'Worship Leader', tier: 'senior',
+      notes: 'Clarifying team roles & building pipeline',
+      children: [
+        {
+          id: 'n17', name: 'Production', role: 'AV & Production Team', tier: 'area', notes: '',
+          children: [
+            { id: 'n12', name: 'Joe',    role: 'Production Lead (AV)', tier: 'volunteer', notes: '', children: [] },
+            { id: 'n18', name: 'Peyton', role: 'Worship Team',         tier: 'volunteer', notes: '', children: [] }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'n8', name: 'Sunday Operations', role: 'Director — TBD', tier: 'area',
+      notes: 'Jeff in trial for director role',
+      children: [
+        { id: 'n9',  name: 'Justin',           role: 'Guest Services',            tier: 'volunteer', notes: '', children: [] },
+        { id: 'n10', name: 'Jeff Martinez',    role: 'Build & Build Out',         tier: 'volunteer', notes: 'Sunday Ops Director trial', children: [] },
+        { id: 'n11', name: 'Monica',           role: 'Café',                      tier: 'volunteer', notes: '', children: [] },
+        { id: 'n19', name: 'Eric',             role: 'Safety Team',               tier: 'volunteer', notes: '', children: [] },
+        { id: 'n20', name: 'Next Steps Team',  role: 'Volunteer Cluster — TBD',   tier: 'area',      notes: '', children: [] },
+        { id: 'n21', name: 'Ushers & Greeters', role: 'Welcome Team',            tier: 'area',      notes: '', children: [] }
+      ]
+    }
+  ]
+};
+
+const DEFAULT_BENCH = ['JT', 'Jamie', 'Corrie', 'Alan', 'Clauda', 'Sheila', 'Nathan', 'Dawson', 'Lindsey'];
+
+const TEACHING_CIRCLE = ['Dakota', 'Cy', 'Rudy', 'Alan', 'JT', 'Ricky'];
+
+const STORAGE_KEY = 'heirloom_org_chart_v2';
+const BENCH_KEY = 'heirloom_org_bench_v2';
+
+let orgData = loadData();
+let bench = loadBench();
+let currentEditId = null;
+let nextId = 1000;
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+function loadBench() {
+  try {
+    const saved = localStorage.getItem(BENCH_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch (e) {}
+  return [...DEFAULT_BENCH];
+}
+function persist() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orgData));
+  localStorage.setItem(BENCH_KEY, JSON.stringify(bench));
+}
+function newId() { return 'n' + (nextId++); }
+
+/* ---------- RENDER ---------- */
+function render() {
+  const root = document.getElementById('treeRoot');
+  root.innerHTML = '';
+  root.appendChild(renderNode(orgData));
+  renderBench();
+  renderTeachingCircle();
+}
+
+function renderTeachingCircle() {
+  const list = document.getElementById('teachingCircleList');
+  if (!list) return;
+  list.innerHTML = '';
+  TEACHING_CIRCLE.forEach(name => {
+    const pill = document.createElement('div');
+    pill.className = 'pill';
+    pill.style.borderColor = 'var(--blue-ink)';
+    pill.style.color = 'var(--blue-ink)';
+    pill.textContent = name;
+    list.appendChild(pill);
+  });
+}
+
+function renderNode(node) {
+  const li = document.createElement('li');
+  const wrap = document.createElement('div');
+  wrap.className = 'node-wrap' + (node.children && node.children.length ? ' has-children' : '');
+
+  const div = document.createElement('div');
+  div.className = 'node tier-' + (node.tier || 'area');
+  div.dataset.id = node.id;
+  div.innerHTML = `
+    <div class="name">${escapeHtml(node.name)}</div>
+    <div class="role">${escapeHtml(node.role || '')}</div>
+    ${node.notes ? `<div class="notes">${escapeHtml(node.notes)}</div>` : ''}
+  `;
+  div.addEventListener('click', () => openModal(node.id));
+
+  // drop target
+  div.addEventListener('dragover', (e) => { e.preventDefault(); div.classList.add('drop-target'); });
+  div.addEventListener('dragleave', () => div.classList.remove('drop-target'));
+  div.addEventListener('drop', (e) => {
+    e.preventDefault();
+    div.classList.remove('drop-target');
+    const benchName = e.dataTransfer.getData('text/bench');
+    if (benchName) assignBenchToNode(benchName, node.id);
+  });
+
+  wrap.appendChild(div);
+  li.appendChild(wrap);
+
+  if (node.children && node.children.length) {
+    const ul = document.createElement('ul');
+    node.children.forEach(c => ul.appendChild(renderNode(c)));
+    li.appendChild(ul);
+  }
+  return li;
+}
+
+function renderBench() {
+  const list = document.getElementById('benchList');
+  list.innerHTML = '';
+  bench.forEach(name => {
+    const pill = document.createElement('div');
+    pill.className = 'pill';
+    pill.textContent = name;
+    pill.draggable = true;
+    pill.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/bench', name);
+    });
+    pill.addEventListener('click', () => {
+      const targetId = prompt('Assign "' + name + '" to which role? Enter the role/name on the chart (e.g. "Sunday Operations"):');
+      if (!targetId) return;
+      const target = findByLabel(targetId);
+      if (!target) { alert('No node found matching: ' + targetId); return; }
+      assignBenchToNode(name, target.id);
+    });
+    list.appendChild(pill);
+  });
+  const add = document.createElement('div');
+  add.className = 'pill add';
+  add.textContent = '+ Add Volunteer';
+  add.addEventListener('click', () => {
+    const n = prompt('Volunteer name:');
+    if (n && n.trim()) { bench.push(n.trim()); persist(); renderBench(); }
+  });
+  list.appendChild(add);
+}
+
+/* ---------- ASSIGN ---------- */
+function assignBenchToNode(benchName, parentId) {
+  const parent = findById(orgData, parentId);
+  if (!parent) return;
+  parent.children = parent.children || [];
+  parent.children.push({
+    id: newId(),
+    name: benchName,
+    role: 'Volunteer',
+    tier: 'volunteer',
+    notes: '',
+    children: []
+  });
+  bench = bench.filter(n => n !== benchName);
+  persist();
+  render();
+}
+
+/* ---------- TREE OPS ---------- */
+function findById(node, id) {
+  if (node.id === id) return node;
+  for (const c of (node.children || [])) {
+    const r = findById(c, id);
+    if (r) return r;
+  }
+  return null;
+}
+function findParentOf(node, id, parent = null) {
+  if (node.id === id) return parent;
+  for (const c of (node.children || [])) {
+    const r = findParentOf(c, id, node);
+    if (r !== null) return r;
+  }
+  return null;
+}
+function findByLabel(label) {
+  const lc = label.toLowerCase().trim();
+  function walk(n) {
+    if (n.name.toLowerCase().includes(lc) || (n.role || '').toLowerCase().includes(lc)) return n;
+    for (const c of (n.children || [])) {
+      const r = walk(c);
+      if (r) return r;
+    }
+    return null;
+  }
+  return walk(orgData);
+}
+
+/* ---------- MODAL ---------- */
+function openModal(id) {
+  const n = findById(orgData, id);
+  if (!n) return;
+  currentEditId = id;
+  document.getElementById('modalTitle').textContent = 'Edit: ' + n.name;
+  document.getElementById('fName').value = n.name || '';
+  document.getElementById('fRole').value = n.role || '';
+  document.getElementById('fTier').value = n.tier || 'area';
+  document.getElementById('fNotes').value = n.notes || '';
+  document.getElementById('btnDelete').style.display = (id === orgData.id) ? 'none' : '';
+  document.getElementById('modalBackdrop').classList.add('show');
+}
+function closeModal() {
+  currentEditId = null;
+  document.getElementById('modalBackdrop').classList.remove('show');
+}
+function saveModal() {
+  if (!currentEditId) return;
+  const n = findById(orgData, currentEditId);
+  if (!n) return;
+  n.name = document.getElementById('fName').value.trim() || n.name;
+  n.role = document.getElementById('fRole').value.trim();
+  n.tier = document.getElementById('fTier').value;
+  n.notes = document.getElementById('fNotes').value.trim();
+  persist();
+  closeModal();
+  render();
+}
+function deleteCurrent() {
+  if (!currentEditId || currentEditId === orgData.id) return;
+  if (!confirm('Delete this node and any children?')) return;
+  const parent = findParentOf(orgData, currentEditId);
+  if (parent) {
+    parent.children = parent.children.filter(c => c.id !== currentEditId);
+    persist();
+    closeModal();
+    render();
+  }
+}
+function addChildToCurrent() {
+  if (!currentEditId) return;
+  const name = prompt('Name of new person:');
+  if (!name) return;
+  const role = prompt('Role:') || '';
+  const n = findById(orgData, currentEditId);
+  n.children = n.children || [];
+  n.children.push({ id: newId(), name: name.trim(), role: role.trim(), tier: 'area', notes: '', children: [] });
+  persist();
+  closeModal();
+  render();
+}
+function addRootChild() {
+  const name = prompt('Name of new person:');
+  if (!name) return;
+  const role = prompt('Role:') || '';
+  orgData.children = orgData.children || [];
+  orgData.children.push({ id: newId(), name: name.trim(), role: role.trim(), tier: 'senior', notes: '', children: [] });
+  persist();
+  render();
+}
+function resetData() {
+  if (!confirm('Reset chart to default Heirloom layout?')) return;
+  orgData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  bench = [...DEFAULT_BENCH];
+  persist();
+  render();
+}
+
+/* ---------- EXPORT ---------- */
+function exportPNG() {
+  const target = document.getElementById('chartWrap');
+  html2canvas(target, { backgroundColor: '#faf7f2', scale: 2 }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'heirloom-org-chart.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+/* ---------- UTIL ---------- */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.getElementById('modalBackdrop').addEventListener('click', (e) => {
+  if (e.target.id === 'modalBackdrop') closeModal();
+});
+
+render();
+</script>
+</body>
+</html>
